@@ -1,0 +1,20 @@
+services:
+    ger.livetopicupdate.controller:
+        class: ger\livetopicupdate\controller\main
+        arguments:
+            - '@request'
+            - '@dbal.conn'
+            - '@user'
+            - '@auth'
+            - '@language'
+
+    ger.livetopicupdate.listener:
+        class: ger\livetopicupdate\event\main_listener
+        arguments:
+            - '@controller.helper'
+            - '@template'
+            - '@user'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+        tags:
+            - { name: event.listener }
