@@ -54,19 +54,19 @@ class main
      */
     public function handle($tid, $old)
     {
-	$response = new json_response();
-	$response_text[] = 0;
-	if ($this->request->is_ajax())
-	{
-	    $current = $this->get_topic_count($tid);
-	    $diff = (int) $current - (int) $old;
-	    if ($diff > 0) 
-	    {
-		$this->lang->add_lang('common', 'ger/livetopicupdate');
-		$response_text['ltu_yes'] = $this->user->lang('LTU_NEW_POSTS', $diff);
-	    }
-	}
-	$response->send($response_text);
+        $response = new json_response();
+        $response_text[] = 0;
+        if ($this->request->is_ajax())
+        {
+            $current = $this->get_topic_count($tid);
+            $diff = (int) $current - (int) $old;
+            if ($diff > 0) 
+            {
+                $this->lang->add_lang('common', 'ger/livetopicupdate');
+                $response_text['ltu_yes'] = $this->user->lang('LTU_NEW_POSTS', $diff);
+            }
+        }
+        $response->send($response_text);
     }
     
     /**
@@ -76,16 +76,16 @@ class main
      */
     private function get_topic_count($tid)
     {
-	$sql = 'SELECT forum_id, topic_posts_approved, topic_posts_unapproved, topic_posts_softdeleted
-		 FROM ' . TOPICS_TABLE . "
-		     WHERE topic_id = " . (int) $tid;
-	$result = $this->db->sql_query($sql);
-	$data = $this->db->sql_fetchrow($result);
-	
-	if (!$this->auth->acl_get('m_approve', $data['forum_id']))
-	{
-	    return (int) $data['topic_posts_approved'];
-	}
-	return (int) $data['topic_posts_approved'] + (int) $data['topic_posts_unapproved'] + (int) $data['topic_posts_softdeleted'];
+        $sql = 'SELECT forum_id, topic_posts_approved, topic_posts_unapproved, topic_posts_softdeleted
+             FROM ' . TOPICS_TABLE . "
+                 WHERE topic_id = " . (int) $tid;
+        $result = $this->db->sql_query($sql);
+        $data = $this->db->sql_fetchrow($result);
+
+        if (!$this->auth->acl_get('m_approve', $data['forum_id']))
+        {
+            return (int) $data['topic_posts_approved'];
+        }
+        return (int) $data['topic_posts_approved'] + (int) $data['topic_posts_unapproved'] + (int) $data['topic_posts_softdeleted'];
     }
 }

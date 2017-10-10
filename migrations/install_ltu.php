@@ -30,7 +30,7 @@ class install_ltu extends container_aware_migration
 	public function update_data()
 	{
 		return array(
-			array('config.add', array('ger_livetopicupdate_interval', 10)),
+			array('config.add', array('ger_livetopicupdate_interval', 30)),
 		);
 	}
 

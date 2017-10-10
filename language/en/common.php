@@ -26,4 +26,5 @@ $lang = array_merge($lang, array(
 		1	=> 'There is %d new post in this topic',
 		2	=> 'There are %d new posts in this topic',
 	),
+    'LTU_REFRESH'                    => 'Click to show',
 ));

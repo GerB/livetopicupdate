@@ -41,6 +41,9 @@ class main_listener implements EventSubscriberInterface
     /* @var \phpbb\config\config */
     protected $config;
 
+    /* @var \phpbb\user */
+    protected $user;
+
     /* @var \phpbb\language\language */
     protected $lang;
 
@@ -56,15 +59,17 @@ class main_listener implements EventSubscriberInterface
      * @param \phpbb\controller\helper	$helper		    Controller helper object
      * @param \phpbb\template\template	$template	    Template object
      * @param \phpbb\config\config      $config		    Config object
+     * @param \phpbb\user               $user           User object
      * @param \phpbb\language\language  $lang		    Language object
      * @param string                    $phpbb_root_path
      * @param string                    $php_ext
      */
-    public function __construct(\phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\language\language $lang, $phpbb_root_path, $php_ext)
+    public function __construct(\phpbb\controller\helper $helper, \phpbb\template\template $template, \phpbb\config\config $config, \phpbb\user $user, \phpbb\language\language $lang, $phpbb_root_path, $php_ext)
     {
         $this->helper           = $helper;
         $this->template	        = $template;
         $this->config           = $config;
+        $this->user             = $user;
         $this->lang             = $lang;
         $this->phpbb_root_path  = $phpbb_root_path;
         $this->php_ext          = $php_ext;
@@ -83,7 +88,7 @@ class main_listener implements EventSubscriberInterface
             $this->lang->add_lang('common', 'ger/livetopicupdate');
             $display_vars = $event['display_vars'];            
             
-            $add = array ('ger_livetopicupdate_interval'  => array('lang' => 'LTU_CHECK_INTERVAL',	'validate' => 'int:0',	'type' => 'number:0:99999', 'explain' => true));
+            $add = array ('ger_livetopicupdate_interval'  => array('lang' => 'LTU_CHECK_INTERVAL',	'validate' => 'int:0',	'type' => 'number:0:99999', 'explain' => true, 'append' => ' ' . $this->user->lang['SECONDS']));
             $position = array_search('read_notification_expire_days', array_keys($display_vars['vars'])) + 1;
             $display_vars['vars'] = array_merge(
                 array_slice($display_vars['vars'], 0, $position),
@@ -104,7 +109,7 @@ class main_listener implements EventSubscriberInterface
     public function assign_template_vars($event)
     {
         $this->post_count = (int) $event['total_posts'];
-        
+        $this->lang->add_lang('common', 'ger/livetopicupdate');
         $this->template->assign_vars(array(
             'U_LIVEUPDATE'      => $this->helper->route('ger_livetopicupdate_controller', ['tid' => $event['topic_id'], 'old' => $event['total_posts']]),
             'U_REFRESH'         => append_sid($this->phpbb_root_path . 'viewtopic.' . $this->php_ext . '?f=' . $event['forum_id'] . '&t=' . $event['topic_id'] . '&view=unread#unread'),
