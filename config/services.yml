@@ -13,7 +13,8 @@ services:
         arguments:
             - '@controller.helper'
             - '@template'
-            - '@user'
+            - '@config'
+            - '@language'
             - '%core.root_path%'
             - '%core.php_ext%'
         tags:

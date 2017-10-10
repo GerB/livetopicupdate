@@ -10,7 +10,7 @@ function livetopicupdate() {
 	}
     });
 }
-setInterval(livetopicupdate, 5000);
+setInterval(livetopicupdate, ltu_interval);
 
 $('#liveupdatebar').click(function() {
     var lastpost = $(".postbody h3 a").last().attr('href');
