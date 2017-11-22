@@ -64,6 +64,7 @@ class main
             {
                 $this->lang->add_lang('common', 'ger/livetopicupdate');
                 $response_text['ltu_yes'] = $this->user->lang('LTU_NEW_POSTS', $diff);
+                $response_text['ltu_nr'] = $diff;
             }
         }
         $response->send($response_text);

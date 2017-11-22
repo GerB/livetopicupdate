@@ -1,3 +1,4 @@
+var titletag = document.title;
 function livetopicupdate() {
     $.ajax({
 	url: ltu_checkurl,
@@ -6,6 +7,7 @@ function livetopicupdate() {
 	    if (result['ltu_yes']) {
 		// New posts found
 		$('#liveupdatebar').text(result['ltu_yes']).show();
+                document.title = '[' + result['ltu_nr'] + '] ' + titletag;
 	    }
 	}
     });
