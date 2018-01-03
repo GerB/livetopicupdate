@@ -101,7 +101,7 @@ class main_listener implements EventSubscriberInterface
     }
     
     /**
-     * Send reuired vars to template
+     * Send required vars to template
      * @param object $event The event object
      * @return null
      * @access public
@@ -112,7 +112,7 @@ class main_listener implements EventSubscriberInterface
         $this->lang->add_lang('common', 'ger/livetopicupdate');
         $this->template->assign_vars(array(
             'U_LIVEUPDATE'      => $this->helper->route('ger_livetopicupdate_controller', ['tid' => $event['topic_id'], 'old' => $event['total_posts']]),
-            'U_REFRESH'         => append_sid($this->phpbb_root_path . 'viewtopic.' . $this->php_ext . '?f=' . $event['forum_id'] . '&t=' . $event['topic_id'] . '&view=unread#unread'),
+            'U_REFRESH'         => append_sid($this->phpbb_root_path . 'viewtopic.' . $this->php_ext . '?f=' . $event['forum_id'] . '&p=' . $lastpost ),
             'S_LTU_INTERVAL'	=> (int) $this->config['ger_livetopicupdate_interval'] * 1000,
         ));
     }
