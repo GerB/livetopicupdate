@@ -15,6 +15,5 @@ function livetopicupdate() {
 setInterval(livetopicupdate, ltu_interval);
 
 $('#liveupdatebar').click(function() {
-    var lastpost = $(".postbody h3 a").last().attr('href');
-    window.location.href = ltu_refreshurl  + lastpost;
+    window.location.href = ltu_refreshurl;
 })
