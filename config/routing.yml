@@ -1,3 +1,6 @@
 ger_livetopicupdate_controller:
     path: /livetopicupdate/{tid}/{old}
     defaults: { _controller: ger.livetopicupdate.controller:handle, tid: "0", old: "0" }
+    requirements:
+        tid: \d+
+        old: \d+
