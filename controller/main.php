@@ -58,17 +58,55 @@ class main
         $response_text[] = 0;
         if ($this->request->is_ajax())
         {
-            $current = $this->get_topic_count($tid);
+            if ($tid > 0) 
+            {
+                $current = $this->get_topic_count($tid);
+                $langstring = 'LTU_NEW_POSTS';
+            }
+            else 
+            {
+                if ($old === 1000)
+                {
+                    // Hard limit set in search.php. We can't update in a reliable way
+                    $current = $old;
+                } 
+                else
+                {
+                    $current = $this->get_unread_count();
+                    $langstring = 'LTU_NEW_TOPICS';
+                }
+            }
             $diff = (int) $current - (int) $old;
             if ($diff > 0) 
             {
                 $this->lang->add_lang('common', 'ger/livetopicupdate');
-                $response_text['ltu_yes'] = $this->user->lang('LTU_NEW_POSTS', $diff);
+                $response_text['ltu_yes'] = $this->user->lang($langstring, $diff);
                 $response_text['ltu_nr'] = $diff;
             }
         }
         $response->send($response_text);
     }
+    
+    
+    /**
+     * Get total count
+     * @return int
+     */
+    private function get_unread_count()
+    {
+        // Check for unread topics
+        $no_permission = array_keys($this->auth->acl_getf('!f_read', true));
+        if ($no_permission) 
+        {
+            $sql_extra = ' AND ' . $this->db->sql_in_set('t.forum_id', $no_permission, true);
+        }
+        else 
+        {
+            $sql_extra = '';
+        }
+        return count(get_unread_topics($this->user->data['user_id'], $sql_extra));
+    }
+    
     
     /**
      * Get current topic count

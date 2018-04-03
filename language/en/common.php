@@ -21,10 +21,16 @@ if (empty($lang) || !is_array($lang))
 $lang = array_merge($lang, array(
     'LTU_CHECK_INTERVAL'            => 'Interval for live topic update',
     'LTU_CHECK_INTERVAL_EXPLAIN'    => 'How frequently (in seconds) the board checks for new posts in a topic. A lower value means more frequent updates but may be stressful for the server.',
+    'LTU_SEARCH_PAGE'               => 'Live update search',
+    'LTU_SEARCH_PAGE_EXPLAIN'       => 'Check for new topics on de search page for unread posts.',
     'LTU_INVALID_QUERY'             => 'Invalid request',
     'LTU_NEW_POSTS'                 => array(
 		1	=> 'There is %d new post in this topic',
 		2	=> 'There are %d new posts in this topic',
+	),
+    'LTU_NEW_TOPICS'                 => array(
+        1	=> 'There is %d new topic',
+        2	=> 'There are %d new topics',
 	),
     'LTU_REFRESH'                    => 'Click to show',
 ));

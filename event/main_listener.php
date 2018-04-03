@@ -23,7 +23,8 @@ class main_listener implements EventSubscriberInterface
     static public function getSubscribedEvents()
         {
         return array(
-            'core.viewtopic_assign_template_vars_before'	=> 'assign_template_vars',
+            'core.viewtopic_assign_template_vars_before'	=> 'set_template_viewtopic',
+            'core.search_results_modify_search_title'       => 'set_template_search',
             'core.viewtopic_modify_page_title'              => 'check_last_page',
             'core.acp_board_config_edit_add'                => 'acp_add_check_interval'
         );
@@ -96,23 +97,64 @@ class main_listener implements EventSubscriberInterface
                 array_slice($display_vars['vars'], $position)
             );
 
+            $add = array ('ger_livetopicupdate_search'  => array('lang' => 'LTU_SEARCH_PAGE',	'validate' => 'bool',	'type' => 'radio:yes_no', 'explain' => true));
+            $position = array_search('read_notification_expire_days', array_keys($display_vars['vars'])) + 1;
+            $display_vars['vars'] = array_merge(
+                array_slice($display_vars['vars'], 0, $position),
+                $add,
+                array_slice($display_vars['vars'], $position)
+            );
+
             $event['display_vars'] = $display_vars;
         }
     }
     
     /**
-     * Send required vars to template
+     * Set viewtopic template vars
      * @param object $event The event object
+     */
+    public function set_template_viewtopic($event)
+    {
+        $vars = [
+            'tid' => $event['topic_id'],
+            'old' => $event['total_posts'],
+            'refresh' => append_sid($this->phpbb_root_path . 'viewtopic.' . $this->php_ext . '?f=' . $event['forum_id'] . '&t=' . $event['topic_id'] . '&view=unread#unread'),
+        ];
+        $this->assign_template_vars($vars);
+    }
+    
+    /**
+     * Set search template vars
+     * Only for unreadposts and if $total_match_count below search.php treshold
+     * @param object $event The event object
+     */
+    public function set_template_search($event)
+    {
+        if ( ($event['search_id'] == 'unreadposts') && ($event['total_match_count'] < 1000)  && ($this->config['ger_livetopicupdate_search']))
+        {
+            $vars = [
+                'tid' => 0,
+                'old' => $event['total_match_count'],
+                'refresh' => append_sid($this->phpbb_root_path . 'search.' . $this->php_ext . '?search_id=unreadposts'),
+            ];
+            $this->assign_template_vars($vars);
+        }
+    }    
+    
+    
+    /**
+     * Send required vars to template
+     * @param array $vars vars defined by caller
      * @return null
      * @access public
      */
-    public function assign_template_vars($event)
+    private function assign_template_vars($vars)
     {
         $this->post_count = (int) $event['total_posts'];
         $this->lang->add_lang('common', 'ger/livetopicupdate');
         $this->template->assign_vars(array(
-            'U_LIVEUPDATE'      => $this->helper->route('ger_livetopicupdate_controller', ['tid' => $event['topic_id'], 'old' => $event['total_posts']]),
-            'U_REFRESH'         => append_sid($this->phpbb_root_path . 'viewtopic.' . $this->php_ext . '?f=' . $event['forum_id'] . '&t=' . $event['topic_id'] . '&view=unread#unread'),
+            'U_LIVEUPDATE'      => $this->helper->route('ger_livetopicupdate_controller', ['tid' => $vars['tid'], 'old' => $vars['old']]),
+            'U_REFRESH'         => $vars['refresh'],
             'S_LTU_INTERVAL'	=> (int) $this->config['ger_livetopicupdate_interval'] * 1000,
         ));
     }
