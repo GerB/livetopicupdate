@@ -28,6 +28,12 @@ class main
 	/* @var \phpbb\user */
 	protected $auth;
 
+	/* @var \phpbb\content_visibility */
+	protected $content_visibility;
+
+	/* @var \phpbb\lang */
+	protected $lang;
+
     /**
      * Controller constructor
      *
@@ -40,12 +46,13 @@ class main
      * @param auth	 $auth	     Auth object
      * @param lang	 $lang	     Language object
      */
-    public function __construct(\phpbb\request\request_interface $request, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\language\language $lang)
+    public function __construct(\phpbb\request\request_interface $request, \phpbb\db\driver\driver_interface $db, \phpbb\user $user, \phpbb\auth\auth $auth, \phpbb\content_visibility $content_visibility, \phpbb\language\language $lang)
     {
         $this->request = $request;
         $this->db = $db;
         $this->user = $user;
         $this->auth = $auth;
+        $this->content_visibility = $content_visibility;
         $this->lang = $lang;
     }
 
@@ -65,7 +72,7 @@ class main
             }
             else 
             {
-                if ($old === 1000)
+                if ($old === 1000 || empty($this->user->data['is_registered']))
                 {
                     // Hard limit set in search.php. We can't update in a reliable way
                     $current = $old;
@@ -96,13 +103,11 @@ class main
     {
         // Check for unread topics
         $no_permission = array_keys($this->auth->acl_getf('!f_read', true));
+        $m_approve_topics_fid_sql = $this->phpbb_content_visibility->get_global_visibility_sql('topic', $no_permission, 't.');
+        $sql_extra = 'AND t.topic_moved_id = 0 AND ' . $m_approve_topics_fid_sql;
         if ($no_permission) 
         {
-            $sql_extra = ' AND ' . $this->db->sql_in_set('t.forum_id', $no_permission, true);
-        }
-        else 
-        {
-            $sql_extra = '';
+            $sql_extra.= ' AND ' . $this->db->sql_in_set('t.forum_id', $no_permission, true);
         }
         return count(get_unread_topics($this->user->data['user_id'], $sql_extra));
     }

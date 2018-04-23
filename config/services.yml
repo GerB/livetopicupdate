@@ -6,6 +6,7 @@ services:
             - '@dbal.conn'
             - '@user'
             - '@auth'
+            - '@content.visibility'
             - '@language'
 
     ger.livetopicupdate.listener:
