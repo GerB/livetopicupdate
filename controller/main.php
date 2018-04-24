@@ -103,7 +103,7 @@ class main
     {
         // Check for unread topics
         $no_permission = array_keys($this->auth->acl_getf('!f_read', true));
-        $m_approve_topics_fid_sql = $this->phpbb_content_visibility->get_global_visibility_sql('topic', $no_permission, 't.');
+        $m_approve_topics_fid_sql = $this->content_visibility->get_global_visibility_sql('topic', $no_permission, 't.');
         $sql_extra = 'AND t.topic_moved_id = 0 AND ' . $m_approve_topics_fid_sql;
         if ($no_permission) 
         {
