@@ -133,12 +133,14 @@ class main_listener implements EventSubscriberInterface
         if ( ($event['search_id'] == 'unreadposts') && ($event['total_match_count'] < 1000)  && ($this->config['ger_livetopicupdate_search']))
         {
             $vars = [
-                'S_LIVE_UPDATE' => true,
                 'tid' => 0,
                 'old' => $event['total_match_count'],
                 'refresh' => append_sid($this->phpbb_root_path . 'search.' . $this->php_ext . '?search_id=unreadposts'),
             ];
             $this->assign_template_vars($vars);
+            $this->template->assign_vars(array(
+                'S_LIVE_UPDATE'	=> true,
+            ));
         }
     }    
     
