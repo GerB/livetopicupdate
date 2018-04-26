@@ -115,6 +115,7 @@ class main_listener implements EventSubscriberInterface
      */
     public function set_template_viewtopic($event)
     {
+        $this->post_count = (int) $event['total_posts'];
         $vars = [
             'tid' => $event['topic_id'],
             'old' => $event['total_posts'],
@@ -144,7 +145,6 @@ class main_listener implements EventSubscriberInterface
         }
     }    
     
-    
     /**
      * Send required vars to template
      * @param array $vars vars defined by caller
@@ -153,7 +153,6 @@ class main_listener implements EventSubscriberInterface
      */
     private function assign_template_vars($vars)
     {
-        $this->post_count = (int) $event['total_posts'];
         $this->lang->add_lang('common', 'ger/livetopicupdate');
         $this->template->assign_vars(array(
             'U_LIVEUPDATE'      => $this->helper->route('ger_livetopicupdate_controller', ['tid' => $vars['tid'], 'old' => $vars['old']]),
